@@ -1,6 +1,8 @@
 from skyfield.api import EarthSatellite, wgs84, load
 import numpy as np
 import csv
+from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
 
 def tle_collator(filename):
     '''
@@ -197,3 +199,39 @@ def az_el_and_range(sat, t, receiver):
     az = az.degrees
     rg = rg.km
     return az, el, rg
+
+def gaussian(x, A, mu, sigma):
+    return A * np.exp(-(x - mu)**2 / (2 * sigma**2))
+
+def single_gaussian_fitter(start_range, end_range, data, init_mu, init_sigma, target_name):
+    offset = np.linspace(-0.315, 0.315, 70)
+    
+    power_range = np.sum(data[:, start_range:end_range], axis=1)
+    popt, pcov = curve_fit(gaussian, offset, power_range, p0=[max(power_range), init_mu, init_sigma])
+    A, mu, sigma= popt
+
+    errors = np.sqrt(np.diag(pcov))
+    mu_err = errors[1]
+
+    x_fit = np.linspace(min(offset), max(offset), 500)
+    y_fit = gaussian(x_fit, *popt)
+    print('Peak offset = ', mu, 'degrees')
+    print('Error = ', mu_err, 'degrees')
+    plt.scatter(offset, power_range, label = 'observation')
+    plt.plot(x_fit, y_fit, label="Gaussian fit", color ='r')
+    plt.xlabel('azimuth offset (degrees)')
+    plt.ylabel('Power')
+    plt.title(target_name)
+    plt.legend()
+    plt.show()
+    return 
+
+def plot_target(start_range=int, end_range=int, target_name=str, data):
+    power_range = np.sum(data[:, start_range:end_range], axis=1)
+    offset = np.linspace(-0.315, 0.315, 70)
+    plt.plot(offset, power_range, label = 'observation')
+    plt.xlabel('azimuth offset (degrees)')
+    plt.ylabel('power')
+    plt.title(target_name)
+    plt.show()
+    return
