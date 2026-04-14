@@ -224,7 +224,7 @@ def single_gaussian_fitter(start_range, end_range, data, init_mu, init_sigma, ta
     plt.title(target_name)
     plt.legend()
     plt.show()
-    return 
+    return mu, mu_err
 
 def plot_target(data, start_range=int, end_range=int, target_name=str):
     power_range = np.sum(data[:, start_range:end_range], axis=1)
