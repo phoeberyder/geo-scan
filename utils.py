@@ -57,7 +57,7 @@ def range_finder_general(norad_id):
     # Bistatic range (from https://skynet.ee.ic.ac.uk/notes/Radar_7_Bistatic_Radar.pdf)
     bistatic_range = d_tx_sat + d_sat_rx - d_tx_rx
 
-    rg = (rg_rx+rg_tx)/2
+    rg = (rg_rx.km +rg_tx.km)/2
     return bistatic_range, rr, rg
 
 def peak_finder_general(range_sample, resample_number, data):
