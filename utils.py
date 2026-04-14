@@ -226,7 +226,7 @@ def single_gaussian_fitter(start_range, end_range, data, init_mu, init_sigma, ta
     plt.show()
     return 
 
-def plot_target(start_range=int, end_range=int, target_name=str, data):
+def plot_target(data, start_range=int, end_range=int, target_name=str):
     power_range = np.sum(data[:, start_range:end_range], axis=1)
     offset = np.linspace(-0.315, 0.315, 70)
     plt.plot(offset, power_range, label = 'observation')
