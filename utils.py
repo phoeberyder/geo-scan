@@ -171,3 +171,25 @@ def offset_calculator(norad_id, start_min, azimuth, catalog, scan_gap_large, cen
     else:
         out_arr = [out_arr[j]-pointing_el_list[j] for j in range(7)]
     return out_arr
+
+def az_el_and_range(sat, t, receiver):
+    '''
+    Gives azimuth, elevation and range of satellite wrt a given receiver at given time from TLE
+    
+    Inputs:
+        sat: tle
+        t: time
+        receiver
+    
+    Outputs:
+        az: in degrees
+        el: in degrees
+        rg: in km
+    '''
+    difference = sat - receiver
+    topocentric = difference.at(t)
+    el, az, rg = topocentric.altaz()
+    el = el.degrees
+    az = az.degrees
+    rg = rg.km
+    return az, el, rg
