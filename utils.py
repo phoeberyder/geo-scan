@@ -46,15 +46,19 @@ def range_finder_general(norad_id):
 
     topocentric_rx = (difference_rx.at(t))
     topocentric_tx = (difference_tx.at(t))
+    _, _, rg_rx = topocentric_rx.altaz()
+    _, _, rg_tx = topocentric_tx.altaz()
 
     _, _, the_range, _, _, range_rate = topocentric_rx.frame_latlon_and_rates(lovell)
     _, _, the_range_tx, _, _, range_rate_tx = topocentric_tx.frame_latlon_and_rates(mhr)
     rr = range_rate_tx.m_per_s/2 + range_rate.m_per_s/2
 
 
-    # Bistatic range
+    # Bistatic range (from https://skynet.ee.ic.ac.uk/notes/Radar_7_Bistatic_Radar.pdf)
     bistatic_range = d_tx_sat + d_sat_rx - d_tx_rx
-    return bistatic_range, rr
+
+    rg = (rg_rx+rg_tx)/2
+    return bistatic_range, rr, rg
 
 def peak_finder_general(range_sample, resample_number, data):
     slice_general = data[:, range_sample:range_sample+1]
